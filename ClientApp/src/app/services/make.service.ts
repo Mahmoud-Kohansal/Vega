@@ -11,6 +11,6 @@ export class MakeService {
 
   }
   getMakes(){
-    return this.http.get('/api/makes').pipe(map(data=>{})).subscribe(result=> {return result});
+    return this.http.get('/api/makes').pipe(map(data=>{return data}));//.subscribe(result=> {return result});
   }
 }
