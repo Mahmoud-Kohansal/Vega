@@ -1,7 +1,10 @@
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Vega.Models
 {
+    [Table("Vehicles")]
     public class Vehicle
     {
         public int Id { get; set; }
@@ -22,5 +25,11 @@ namespace Vega.Models
         [StringLength(255)]
         public string ContactPhone { get; set; }
         
+        public ICollection<VehicleFeature> VehicleFeatures {get;set;}
+
+        public Vehicle()
+        {
+            VehicleFeatures = new List<VehicleFeature>();
+        }
     }
 }
