@@ -9,6 +9,8 @@ namespace Vega.Controllers.Resources
 
         public bool IsRegistered { get; set; }
         
+        public ContactResource Contact { get; set; }
+        
         
         public ICollection<int> Features {get;set;}
 
