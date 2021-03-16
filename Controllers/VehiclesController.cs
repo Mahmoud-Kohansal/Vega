@@ -1,7 +1,10 @@
+using System.Threading.Tasks;
+using System.Xml.XPath;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Vega.Controllers.Resources;
 using Vega.Models;
+using Vega.Persistence;
 
 namespace Vega.Controllers
 {
@@ -10,16 +13,23 @@ namespace Vega.Controllers
     public class VehiclesController : Controller
     {
         private readonly IMapper mapper;
-        public VehiclesController(IMapper mapper)
+        private readonly VegaDbContext dbContext;
+        public VehiclesController(IMapper mapper, VegaDbContext dbContext)
         {
+            this.dbContext = dbContext;
             this.mapper = mapper;
 
         }
         [HttpPost]
-        public IActionResult CreateVehicle([FromBody] VehicleResource vehicleResource)
+        public async Task<IActionResult> CreateVehicle([FromBody] VehicleResource vehicleResource)
         {
             Vehicle vehicle = this.mapper.Map<VehicleResource, Vehicle>(vehicleResource);
-            return Ok(vehicle);
+            dbContext.Vehicles.Add(vehicle);
+            await dbContext.SaveChangesAsync();
+
+            var result = mapper.Map<Vehicle, VehicleResource>(vehicle);
+
+            return Ok(result);
         }
     }
 }

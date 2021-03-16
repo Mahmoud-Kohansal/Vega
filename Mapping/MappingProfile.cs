@@ -14,6 +14,9 @@ namespace Vega.Mapping
             CreateMap<Make, MakeResource>();
             CreateMap<Model, ModelResource>();
             CreateMap<Feature, FeatureResource>();
+            CreateMap<Vehicle, VehicleResource>()
+            .ForMember(vr => vr.Contact, opt=> opt.MapFrom(vr=> new ContactResource{Name = vr.ContactName, Email= vr.ContactEmail, Phone=vr.ContactPhone}))
+            .ForMember(vr => vr.Features, opt => opt.MapFrom(vr => vr.Features.Select(vr => vr.FeatureId)));
 
             //Map Api Resource to Domain Class
             CreateMap<VehicleResource, Vehicle>()
