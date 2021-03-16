@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using System.Xml.XPath;
 using AutoMapper;
@@ -23,7 +24,12 @@ namespace Vega.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateVehicle([FromBody] VehicleResource vehicleResource)
         {
+            if(!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             Vehicle vehicle = this.mapper.Map<VehicleResource, Vehicle>(vehicleResource);
+            vehicle.LastUpdate = DateTime.Now;
             dbContext.Vehicles.Add(vehicle);
             await dbContext.SaveChangesAsync();
 
