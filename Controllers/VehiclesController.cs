@@ -25,7 +25,7 @@ namespace Vega.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateVehicle([FromBody] VehicleResource vehicleResource)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
@@ -41,11 +41,12 @@ namespace Vega.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateVehicle(int id, [FromBody] VehicleResource vehicleResource)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            Vehicle vehicle = await dbContext.Vehicles.Include(v => v.Features).SingleOrDefaultAsync(v => v.Id == id );
+            Vehicle vehicle = await dbContext.Vehicles.Include(v => v.Features).SingleOrDefaultAsync(v => v.Id == id);
+            if (vehicle == null) return NotFound();
             this.mapper.Map<VehicleResource, Vehicle>(vehicleResource, vehicle);
             vehicle.LastUpdate = DateTime.Now;
             dbContext.Vehicles.Update(vehicle);
@@ -54,6 +55,23 @@ namespace Vega.Controllers
             var result = mapper.Map<Vehicle, VehicleResource>(vehicle);
 
             return Ok(result);
+        }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            Vehicle vehicle = await dbContext.Vehicles.FindAsync(id);
+            if (vehicle == null) return NotFound();
+            dbContext.Vehicles.Remove(vehicle);
+            await dbContext.SaveChangesAsync();
+            return Ok(id);
+        }
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetVehicle(int id)
+        {
+            Vehicle vehicle = await dbContext.Vehicles.Include(v => v.Features).SingleOrDefaultAsync(v=> v.Id == id);
+            if (vehicle == null) return NotFound();
+            var vehicleResource = mapper.Map<Vehicle, VehicleResource>(vehicle);
+            return Ok(vehicleResource);
         }
     }
 }
